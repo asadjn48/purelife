@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, Filter, X, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Filter, X, ChevronDown, Check } from 'lucide-react';
 
 const ProductFilters = ({
   searchQuery,
@@ -16,6 +16,16 @@ const ProductFilters = ({
   onClearFilters,
   totalResults
 }) => {
+  const [isSortOpen, setIsSortOpen] = useState(false);
+
+  const sortOptions = [
+    { value: 'featured', label: 'Featured' },
+    { value: 'price-low', label: 'Price: Low to High' },
+    { value: 'price-high', label: 'Price: High to Low' },
+    { value: 'rating', label: 'Highest Rated' },
+    { value: 'name', label: 'Name A-Z' },
+  ];
+
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm mb-8 transition-all duration-300">
       <div className="flex flex-col md:flex-row gap-4">
@@ -32,22 +42,58 @@ const ProductFilters = ({
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={20} />
         </div>
 
-        <div className="flex gap-3">
-          {/* Custom Styled Select */}
-          <div className="relative min-w-[180px]">
-            <select
-              value={sortBy}
-              onChange={(e) => onSortChange(e.target.value)}
-              className="w-full appearance-none pl-4 pr-10 py-3 bg-primary/5 border border-primary/10 rounded-xl text-sm font-semibold text-primary outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer hover:bg-primary/10 transition-colors"
+        <div className="flex gap-3 z-20">
+          
+          {/* --- CUSTOM SORT DROPDOWN --- */}
+          <div className="relative min-w-[200px]">
+            {/* 1. The Trigger Button */}
+            <button
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              className="w-full flex items-center justify-between pl-4 pr-3 py-3 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 outline-none hover:border-primary hover:text-primary focus:ring-2 focus:ring-primary/20 transition-all"
             >
-              <option value="featured">✨ Featured</option>
-              <option value="price-low">💰 Price: Low to High</option>
-              <option value="price-high">💎 Price: High to Low</option>
-              <option value="rating">⭐ Highest Rated</option>
-              <option value="name">🔤 Name A-Z</option>
-            </select>
-            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary pointer-events-none" />
+              <span>
+                {sortOptions.find(opt => opt.value === sortBy)?.label || 'Sort By'}
+              </span>
+              <ChevronDown 
+                size={16} 
+                className={`text-gray-400 transition-transform duration-200 ${isSortOpen ? 'rotate-180 text-primary' : ''}`} 
+              />
+            </button>
+
+            {/* 2. The Dropdown Menu */}
+            {isSortOpen && (
+              <>
+                {/* Invisible backdrop to close menu when clicking outside */}
+                <div 
+                  className="fixed inset-0 z-10" 
+                  onClick={() => setIsSortOpen(false)} 
+                />
+                
+                {/* The List */}
+                <div className="absolute top-full right-0 mt-2 w-full bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        onSortChange(option.value);
+                        setIsSortOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors text-left
+                        ${sortBy === option.value
+                          ? 'bg-primary/5 text-primary font-bold' 
+                          : 'text-gray-600 hover:bg-primary/5 hover:text-primary'
+                        }
+                      `}
+                    >
+                      {option.label}
+                      {sortBy === option.value && <Check size={14} />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
+          {/* --------------------------- */}
 
           {/* Filter Toggle Button */}
           <button
@@ -69,7 +115,7 @@ const ProductFilters = ({
         <div className="mt-6 pt-6 border-t border-gray-100 animate-in slide-in-from-top-2 duration-300">
           <div className="grid md:grid-cols-12 gap-8">
             
-            {/* Categories (Span 8) */}
+            {/* Categories */}
             <div className="md:col-span-8">
               <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                 Categories
@@ -102,7 +148,7 @@ const ProductFilters = ({
               </div>
             </div>
 
-            {/* Price Range (Span 4) */}
+            {/* Price Range */}
             <div className="md:col-span-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-bold text-gray-900">Price Range</h4>
