@@ -171,7 +171,7 @@ const Footer = () => {
                 </li>
                 <li className="flex items-center gap-3 text-sm text-gray-600">
                   <Phone className="text-primary shrink-0" size={18} />
-                  <span className="font-medium">+971 4 000 0000</span>
+                  <span className="font-medium">+971 50 202 1155</span>
                 </li>
                 <li className="flex items-center gap-3 text-sm text-gray-600">
                   <Mail className="text-primary shrink-0" size={18} />
@@ -181,7 +181,7 @@ const Footer = () => {
 
              {/* WhatsApp Button */}
              <a
-               href="https://wa.me/97140000000"
+               href="https://wa.me/971502021155"
                target="_blank"
                rel="noopener noreferrer"
                className="inline-flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white text-sm font-bold rounded-xl hover:bg-[#20bd5a] transition-colors shadow-lg shadow-green-100"

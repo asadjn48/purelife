@@ -121,7 +121,7 @@ const Navbar = () => {
             </span>
             <span className="hidden md:flex items-center gap-1.5 opacity-90">
               <Phone size={13} />
-              <span>+971 4 000 0000</span>
+              <span>+971 50 202 1155</span>
             </span>
           </div>
           <div className="flex items-center gap-4">
