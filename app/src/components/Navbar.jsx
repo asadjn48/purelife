@@ -12,16 +12,6 @@ const cartCount = 3;
 const cartTotal = 150.00;
 
 const MEGA_MENU_DATA = {
-
-  shop: {
-    title: 'Products',
-    columns: [
-      // { title: 'Monitoring', items: ['BP Monitors', 'Glucometers', 'Thermometers'] },
-      // { title: 'Respiratory', items: ['Nebulizers', 'Inhalers', 'Oxygen'] },
-      // { title: 'Supports', items: ['Wheelchairs', 'Walkers', 'Braces'] }
-    ]
-  },
-  
   medicines: {
     title: 'Medicines',
     columns: [
@@ -63,26 +53,21 @@ const MEGA_MENU_DATA = {
       { title: 'Supports', items: ['Wheelchairs', 'Walkers', 'Braces'] }
     ]
   },
-  
 };
 
 const MAIN_NAV_ITEMS = [
-  { key: 'products', label: 'Products' },
-  { key: 'medicines', label: 'Medicines' },
-  { key: 'beauty', label: 'Beauty & Care' },
-  { key: 'vitamins', label: 'Vitamins' },
-  { key: 'mother', label: 'Mother & Baby' },
-  { key: 'devices', label: 'Devices' }
-  
+  { key: 'home', label: 'Home', path: '/' }, // Changed Products to Home
+  { key: 'medicines', label: 'Medicines', path: '/category/medicines' },
+  { key: 'beauty', label: 'Beauty & Care', path: '/category/beauty' },
+  { key: 'vitamins', label: 'Vitamins', path: '/category/vitamins' },
+  { key: 'mother', label: 'Mother & Baby', path: '/category/mother' },
+  { key: 'devices', label: 'Devices', path: '/category/devices' }
 ];
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-  
-  // NEW: State to track which mobile category is open
   const [expandedMobileMenu, setExpandedMobileMenu] = useState(null);
-
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   
@@ -90,7 +75,6 @@ const Navbar = () => {
   const location = useLocation();
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -101,7 +85,6 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setExpandedMobileMenu(null);
@@ -120,7 +103,6 @@ const Navbar = () => {
     navigate('/');
   };
 
-  // Toggle function for mobile accordion
   const toggleMobileCategory = (key) => {
     setExpandedMobileMenu(expandedMobileMenu === key ? null : key);
   };
@@ -156,18 +138,18 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4 md:gap-8">
             
-            {/* Logo - PureLife */}
+            {/* Logo */}
             <Link to="/" className="flex-shrink-0">
                <div className="relative h-14 md:h-16 w-auto flex items-center">
                  <img 
-                   src="/assets/logo.jpeg" 
+                   src="/logo.jpeg" 
                    alt="Pure Life Pharmacy"
                    className="h-full w-auto object-contain"
                  />
                </div>
             </Link>
 
-            {/* Search Bar - IMPROVED STYLING */}
+            {/* Search Bar */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl relative group">
               <div className="relative w-full">
                 <input
@@ -290,8 +272,7 @@ const Navbar = () => {
                 className="group"
               >
                 <Link
-                  // to={`/category/${item.key}`}
-                  to={`${item.key}`}
+                  to={item.path} 
                   className={`
                     flex items-center gap-1 px-3 py-3 text-sm font-medium transition-colors border-b-2 border-transparent
                     ${activeMegaMenu === item.key 
@@ -302,7 +283,9 @@ const Navbar = () => {
                   `}
                 >
                   {item.label}
-                  <ChevronDown size={14} className={`transition-transform duration-200 ${activeMegaMenu === item.key ? 'rotate-180' : ''}`} />
+                  {item.key !== 'home' && ( // Only show chevron for items with dropdowns
+                    <ChevronDown size={14} className={`transition-transform duration-200 ${activeMegaMenu === item.key ? 'rotate-180' : ''}`} />
+                  )}
                 </Link>
 
                 {/* Dropdown Panel */}
@@ -312,7 +295,7 @@ const Navbar = () => {
                       <div className="flex gap-12">
                         <div className="w-1/5 pr-4 border-r border-gray-100">
                            <h3 className="text-xl font-bold text-primary mb-2">{MEGA_MENU_DATA[item.key].title}</h3>
-                           <Link to={`/category/${item.key}`} className="text-sm text-secondary font-medium hover:underline">
+                           <Link to={item.path} className="text-sm text-secondary font-medium hover:underline">
                              View all products &rarr;
                            </Link>
                         </div>
@@ -346,16 +329,14 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* 4. MOBILE MENU DRAWER - WITH DROPDOWN/ACCORDION */}
+      {/* 4. MOBILE MENU DRAWER */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden">
-          {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           ></div>
 
-          {/* Drawer Content */}
           <div className="absolute left-0 top-0 h-full w-[85%] max-w-[320px] bg-white shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
             <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-primary text-white">
               <span className="font-bold text-lg">Menu</span>
@@ -367,23 +348,24 @@ const Navbar = () => {
             <div className="flex-1 overflow-y-auto p-4">
               {MAIN_NAV_ITEMS.map((item) => (
                 <div key={item.key} className="mb-2 border-b border-gray-50 pb-2">
-                   {/* Main Category Header with Accordion Toggle */}
+                   {/* Main Category Header */}
                    <div 
                      className="flex items-center justify-between py-2 cursor-pointer"
-                     onClick={() => toggleMobileCategory(item.key)}
+                     onClick={() => item.key === 'home' ? navigate('/') : toggleMobileCategory(item.key)}
                    >
                       <span className={`font-bold text-base ${expandedMobileMenu === item.key ? 'text-primary' : 'text-gray-800'}`}>
                         {item.label}
                       </span>
-                      {/* Chevron rotates when open */}
-                      <ChevronDown 
-                        size={18} 
-                        className={`text-gray-400 transition-transform duration-200 ${expandedMobileMenu === item.key ? 'rotate-180 text-primary' : ''}`}
-                      />
+                      {item.key !== 'home' && (
+                        <ChevronDown 
+                          size={18} 
+                          className={`text-gray-400 transition-transform duration-200 ${expandedMobileMenu === item.key ? 'rotate-180 text-primary' : ''}`}
+                        />
+                      )}
                    </div>
 
                    {/* Sub-Items (Accordion Body) */}
-                   {expandedMobileMenu === item.key && (
+                   {expandedMobileMenu === item.key && MEGA_MENU_DATA[item.key] && (
                      <div className="pl-2 mt-1 space-y-4 animate-in slide-in-from-top-2 duration-200 bg-gray-50/50 rounded-lg p-3">
                         {MEGA_MENU_DATA[item.key]?.columns.map((col, idx) => (
                           <div key={idx} className="mb-3 last:mb-0">
@@ -405,7 +387,7 @@ const Navbar = () => {
                           </div>
                         ))}
                         <Link 
-                          to={`/category/${item.key}`} 
+                          to={item.path} 
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="flex items-center gap-1 text-sm font-semibold text-primary mt-3 pt-2 border-t border-gray-200"
                         >

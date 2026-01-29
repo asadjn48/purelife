@@ -94,7 +94,7 @@ const Footer = () => {
           <div className="lg:col-span-4 space-y-2">
             <Link to="/" className="inline-block">
               <img 
-                src="/assets/logo.jpeg" 
+                src="/logo.jpeg" 
                 alt="Pure Life Pharmacy" 
                 className="h-20 w-auto object-contain mix-blend-multiply"
               />
